@@ -179,3 +179,29 @@ agg_summary = df_used.groupby('Cluster')[numerical_cols].agg(['mean', 'min', 'ma
 print(agg_summary) # shows the summary result
 
 # 13. Export the data
+# A. (BASIC METHOD)
+df_used.rename(columns={"Cluster": "Target"}, inplace=True)
+df_used.head() # shows the top 5 rows
+df_used.to_csv('data_clustering.csv', index=False) # save the data to CSV file
+
+# B. (SKILLED METHOD) > inverse transform the dataset
+df_inverse = df_used.copy() # inverse transform the dataset to the normal range for numerical data
+df_inverse[numerical_cols] = scaler.inverse_transform(df_inverse[numerical_cols]) # use the 'scaler' to revert 'numerical_cols' to their original values
+# reverse the encoding of the dataset back to its original categories.
+for column in categorical_cols:
+    encoder = encoders[column] # get the appropriate encoder for 'column' from the 'encoders' dictionary
+    df_inverse[column] = encoder.inverse_transform(df_inverse[column].astype(int)) # use the scaler to inverse-transform the column
+df_inverse.head() # shows the top 5 rows of result
+
+# groupby 'df_inverse' based on 'Target'  and count the agregation for 'numerical_cols'
+agg_summary_num = df_inverse.groupby('Target')[numerical_cols].agg(['mean', 'min', 'max']).round(2).T
+# groupby 'df_inverse' by 'Target' and calculate the aggregation for 'categorical_cols'
+#  calculate the 'mode' aggregation (the most frequently occurring value).
+#  use 'lambda x: x.mode()[0]' to retrieve the first mode value
+agg_summary_cat = df_inverse.groupby('Target')[categorical_cols].agg(lambda x: x.mode()[0]).round(2).T
+print(agg_summary_num) # show the summary of 2 results
+print(agg_summary_cat)
+
+# C. (ADVANCED METHOD) > recheck the inverse data from skilled method and save it
+df_inverse.head()
+df_inverse.to_csv('data_clustering_inverse.csv', index=False) # save the inverse data to CSV file (for building the Classification Method in next model)
