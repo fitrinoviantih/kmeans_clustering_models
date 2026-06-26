@@ -56,4 +56,17 @@ for i, column in enumerate(numerical_cols):
 plt.tight_layout()
 plt.show()
 
-# 7. 
+# 7. Load the datasets using EDA (optional steps)
+plt.figure(figsize=(12, 6))
+
+# - create a boxplot visualization to view the distribution of 'TransactionAmount' (y) based on 'CustomerOccupation' (x)
+sns.boxplot(x='CustomerOccupation', y='TransactionAmount', data=df)
+
+plt.title("Nilai Transaksi per Pekerjaan Nasabah (Boxplot)")
+
+# - rotate the x-axis labels to prevent overlapping
+plt.xticks(rotation=45)
+
+plt.show()
+
+# 8. Cleaning and Preprocessing Data
